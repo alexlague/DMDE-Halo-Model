@@ -26,7 +26,7 @@ def compute_linear_g(Omegam, w, Gamma_over_rho):
     #w = -.8
     #Gamma_over_rho = 6*Omegam
     H_of_a = lambda a: np.sqrt(Omegam*a**-3 + OmegaL*a**(-3*(1+w)))
-    coeff1 = lambda a: (1.5*Omegam * a**-3/H_of_a(a)**2-3+a**5/H_of_a(a)*Gamma_over_rho)/a
+    coeff1 = lambda a: (1.5*Omegam * a**-3/H_of_a(a)**2-3+a**2/H_of_a(a)*Gamma_over_rho/Omegam)/a
     coeff2 = lambda a: 1.5 / a**2 * Omegam * a**-3 / H_of_a(a)**2
 
     def g_derivatives(x, y):
@@ -63,13 +63,13 @@ def compute_delta_c(Omegam, w, Gamma_over_rho):
     coeff2 = lambda x: -0.5*(Omegam*sc_m(x)
                              +(1+3*w)*OmegaL*sc_L(x))/(Omegam*sc_m(x)+OmegaL*sc_L(x))
     coeff3 = lambda x: -0.5*Omegam*sc_m(x)/(Omegam*sc_m(x)+OmegaL*sc_L(x))
-    coeff4 = lambda x: -np.exp(x_ini)*np.exp(4*x)*(Omegam*sc_m(x)+OmegaL*sc_L(x))
+    coeff4 = lambda x: -np.exp(3*x) / np.sqrt(Omegam*sc_m(x)+OmegaL*sc_L(x)) / Omegam
 
     def y_derivatives(x, y):
         return [y[1], coeff1(x)*y[1]+coeff2(x)*y[0]+ 
                 coeff3(x)*(np.exp(x)/np.exp(x_ini)+y[0])
                 *((y[0]*np.exp(x_ini)/np.exp(x)+1)**(-3)*(1+delta_ini)-1)+
-                coeff4(x)*Gamma_over_rho*(y[0]*np.exp(x_ini)/np.exp(x)+1)**(-3)]
+                coeff4(x)*Gamma_over_rho*(y[1]-y[0])]
     
     # Initial conditions from 1703.05824 below Eq. (14)
     x_array = np.linspace(x_ini, np.exp(1), 10000)
